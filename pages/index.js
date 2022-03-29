@@ -1,21 +1,30 @@
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
 import { useQuery, gql } from '@apollo/client';
+import Pluralize from 'pluralize';
 
-const USERS_COUNT = gql`{
-  usersCount
+const ARTWORKS_COUNT = gql`{
+  artworksCount
 }`;
 
 export default function Home() {
-  const { loading, error, data } = useQuery(USERS_COUNT);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>{error.message}</p>;
+  const { loading, error, data } = useQuery(ARTWORKS_COUNT);
   return (
     <div className={styles.container}>
       <Head>
         <title>vdbacon</title>
       </Head>
-      <div className={styles.main}>{data.usersCount}</div>
+      <div className={styles.main}>
+        {(() => {
+          if (loading) {
+            return 'Loading...';
+          } else if (error) {
+            return error.message;
+          } else {
+            return Pluralize(`Artworks`, data.artworksCount, true);
+          }
+        })()}
+      </div>
     </div>
   );
 }
